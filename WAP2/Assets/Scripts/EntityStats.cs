@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class UnitStats
+public class Stat
 {
     [SerializeField]
     protected float baseHealthPointMax;
@@ -31,7 +31,7 @@ public class UnitStats
         }
     }
 
-    public UnitStats(int maxHP)
+    public Stat(int maxHP)
     {
         baseHealthPointMax = maxHP;
         InitStats();
@@ -98,22 +98,22 @@ public class EntityStats : MonoBehaviour
 {
     #region variables
     [SerializeField]
-    private UnitStats unitStat;
+    private Stat stat;
 
     public float HealthPointdrv
     {
-        get => unitStat.HealthPoint;
+        get => stat.HealthPoint;
     }
     public float HealthPointMax
     {
-        get => unitStat.HealthPointMax;
+        get => stat.HealthPointMax;
     }
     #endregion
     #region user function
     public void TakeDamage(float damage)
     {
-        unitStat.TakeDamage(damage);
-        if (unitStat.IsDead)
+        stat.TakeDamage(damage);
+        if (stat.IsDead)
             StartCoroutine(StartDyingAnimation());
     }
 
@@ -124,21 +124,21 @@ public class EntityStats : MonoBehaviour
 
     public void TakeHeal(int heal)
     {
-        unitStat.TakeHeal(heal);
+        stat.TakeHeal(heal);
     }
 
     public void AdjustHealthPoint(int value)
     {
-        unitStat.AdjustHealthPoint(value);
+        stat.AdjustHealthPoint(value);
     }
 
     public void AdjustHealthPoint(float ratio)
     {
-        unitStat.AdjustHealthPoint(ratio);
+        stat.AdjustHealthPoint(ratio);
     }
     #endregion
     private void OnEnable()
     {
-        unitStat.InitStats();
+        stat.InitStats();
     }
 }
