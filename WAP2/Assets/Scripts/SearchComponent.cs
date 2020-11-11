@@ -6,11 +6,12 @@ public class SearchComponent : MonoBehaviour
 {
     private Queue<GameObject> searchedObjs = new Queue<GameObject>(10);
     [SerializeField]
-    private float recognitionDist = 20f;
+    private float recognitionDist = 20f; // 인식거리
     [SerializeField]
-    private float recognitionDegree = 180f;
+    private float recognitionDegree = 180f; // 인식각도
     [SerializeField]
     private int searchLayer = 8;
+    internal Vector3 position;
 
     public Queue<GameObject> SearchedObjs
     {
@@ -27,14 +28,19 @@ public class SearchComponent : MonoBehaviour
             float searchRadius = 1f;
             Vector3 center = transform.position;
             searchedObjs.Clear();
-            for(; GetDistanceTo(center) < recognitionDist; searchRadius *= 2)
+            for (; GetDistanceTo(center) < recognitionDist; searchRadius *= 2)
             {
                 center = center + transform.forward * searchRadius;
-                int searchCnt = Physics.SphereCastNonAlloc(center, searchRadius, Vector3.one.normalized, raycastedObjs,0.001f, targetLayer);
+                int searchCnt = Physics.SphereCastNonAlloc(center, searchRadius, Vector3.one.normalized, raycastedObjs, 0.001f, targetLayer);
                 int i = 0;
                 for (; i < searchCnt && raycastedObjs[i].collider != null; i++)
+                {
                     if (IsInPOV(raycastedObjs[i].transform.position))
+                    {
+                        Debug.Log(raycastedObjs[i].collider.gameObject);
                         searchedObjs.Enqueue(raycastedObjs[i].collider.gameObject);
+                    }
+                }
             }
             yield return new WaitForSeconds(0.2f);
         }
@@ -42,8 +48,8 @@ public class SearchComponent : MonoBehaviour
 
     private bool IsInPOV(Vector3 pos)
     {
-        var angleToPos = Vector3.Angle((pos-transform.position).normalized, transform.forward);
-        return ( Mathf.Abs(angleToPos) <= recognitionDegree / 2);
+        var angleToPos = Vector3.Angle((pos - transform.position).normalized, transform.forward);
+        return (Mathf.Abs(angleToPos) <= recognitionDegree / 2);
     }
 
     private float GetDistanceTo(Vector3 pos)
