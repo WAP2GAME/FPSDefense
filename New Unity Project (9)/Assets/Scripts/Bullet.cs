@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
+
 using System.Security.Cryptography;
 using UnityEngine;
 
@@ -10,6 +10,9 @@ public class Bullet : MonoBehaviour
 
     float Speed;
     float time;
+    public int Damage = 20;
+
+
     public GameObject bullet;
 
     [SerializeField]
@@ -19,7 +22,30 @@ public class Bullet : MonoBehaviour
     private Camera theCam;
 
     private RaycastHit hitInfo;
-    private Vector3 direction;
+    public Vector3 direction;
+
+
+    private static GunController instance;
+    public static GunController Instance { get { return instance; } }
+
+
+
+    ObjectPool objectPool;
+
+
+
+
+    void Start()
+    {
+     
+
+        objectPool = ObjectPool.Instance;
+
+        if (!objectPool.IsContainObject(bullet.name))
+            objectPool.AddObject(bullet, bullet.name, 100);
+
+    }
+
 
     public void OnEnable()
     {
@@ -32,10 +58,7 @@ public class Bullet : MonoBehaviour
         Speed = newSpeed;
         time = Time.time + 2;
     }
-
-   
-
-
+       
 
     // Update is called once per frame
     void Update()
@@ -44,20 +67,17 @@ public class Bullet : MonoBehaviour
 
     }
 
-
-
-
-
-
+    
     void OnTriggerEnter(Collider col)
     {
 
-
+   
 
         if (col.gameObject.tag == "Target")
         {
             col.gameObject.SetActive(true);
-
+            Destroy(this.gameObject);
+            Debug.Log("df");
         }
     }
 }
