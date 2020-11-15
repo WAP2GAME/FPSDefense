@@ -89,7 +89,7 @@ public class GunController : MonoBehaviour
         {
             GameObject prefabInstance = Instantiate(bulletPrefab);
             prefabInstance.transform.SetParent(currentGun.GetComponent<Transform>());
-            prefabInstance.SetActive(false);
+            prefabInstance.SetActive(true);
 
         }
 
@@ -158,36 +158,14 @@ public class GunController : MonoBehaviour
         PlaySE(currentGun.fire_Sound);
         currentGun.muzzleFlash.Play();
         bullet = objectPool.GetPooledObject(bulletPrefab.name);
+        bullet.GetComponent<Bullet>().direction = transform.forward;
         bullet.SetActive(true);
-        Hit();
+
         StopAllCoroutines();
         StartCoroutine(RetroActionCoroutine());
     }
 
-    private void Hit()
-    {
 
-        instance = this;
-
-
-        for (int i = 0; i < currentFireRate; i++)
-        {
-            GameObject prefabInstance = Instantiate(bulletPrefab);
-            prefabInstance.transform.SetParent(currentGun.GetComponent<Transform>());
-            prefabInstance.SetActive(false);
-
-        }
-
-
-
-        if (Physics.Raycast(theCam.transform.position, theCam.transform.forward, out hitInfo, currentGun.range))
-        {
-            GameObject clone = Instantiate(hit_effect_prefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-            GameObject clone1 = Instantiate(bulletPrefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
-            Destroy(clone, 2f);
-            Destroy(clone1, 2f);
-        }
-    }
 
 
     // 재장전 시도
