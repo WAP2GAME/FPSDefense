@@ -1,29 +1,102 @@
-﻿using System.Collections;
+﻿//using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+//using System.Runtime.InteropServices;
+using Unity.Collections;
 using UnityEngine;
-using UnityEngine.AI;
-public class enemyAI : MonoBehaviour
+using UnityEngine.AI; //NavMesh
+using UnityEngine.UIElements;
+
+public class EnemyAI : MonoBehaviour
 {
+    //EnemyTrace
     private NavMeshAgent agent = null;
     private SearchComponent searchcomponent = null;
     private Vector3 destination;
     public GameObject enemyTransform;
     private float dist;
     [SerializeField] private GameObject target;
-    [SerializeField] private Animator Animator;
+
+    //AttackTarget
+    [SerializeField] private bool HitDamage; // 공격
+    [SerializeField] private bool HitSpeed;  // 공격속도
+    [SerializeField] private float EnemyStr;
+    private float Hitrange = 100f;
+    Animator anim;
+    private bool targetAttack;
+    private bool isDead;
+  
+
     private void Start()
     {
+        //EnemyTrace
         searchcomponent = GetComponent<SearchComponent>();
+        agent = GetComponent<NavMeshAgent>();
 
-        agent =GetComponent<NavMeshAgent>();
+        //AttackTarget
+        anim = GetComponent<Animator>();
+        targetAttack = false;
+        isDead = false;
+
+        Hitrange += GameManager.instance.AddZombieHp;
+        EnemyStr += GameManager.instance.AddZombiePower;
 
     }
 
-    void Update() // searchcomponent 를 통해 찾은 적들을 향해 가도록 하는 코드는 넣어야함
+    
+
+    //void Update()
+    //{
+    //    //TraceEnemy();
+    //}
+    //public void TraceEnemy() // EnemyTrace
+    //{
+
+    //    if (Vector3.Distance(transform.position, target.transform.position) < Hitrange)
+    //    {
+    //        transform.LookAt(target.transform);
+    //        transform.position = Vector3.MoveTowards(transform.position, target.transform.position, 0.1f);
+    //        anim.SetTrigger("targetFind"); // Run애니메이션 실행
+    //    }
+    //}
+
+
+    private IEnumerator ZombieAttack()
     {
-        
-        int size = searchcomponent.SearchedObjs.Count;
+        if(Vector3.Distance(transform.position, GameManager.instance.Player.transform.position) < 50) // 사정거리 안에 플레이어가 들어온다면
+        {
+            target = GameManager.instance.Player;
+        }
+        else
+        {
+            target = GameManager.instance.Nexus;
+        }
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position), 0.1f);
+        transform.position = Vector3.MoveTowards(transform.position, target.transform.position, 0.5f);
+
+
+        if(Vector3.Distance(transform.position,target.transform.position) < 5)
+        {
+            anim.SetBool("TargetFind", false);
+            anim.SetBool("targetAttack", true);
+            print("공격시작");
+            yield break;
+        }
+        yield return new WaitForFixedUpdate();
+        StartCoroutine(ZombieAttack());
+    }
+
+
+
+    public void ZombieSetting()
+    {
+        //anim.SetTrigger("targetFind");
+        StartCoroutine(ZombieAttack());
+    }
+
+}
+        /*int size = searchcomponent.SearchedObjs.Count;
         GameObject[] objects = searchcomponent.SearchedObjs.ToArray(); // 큐에있는 모든 원소를 배열로 변환 ?
         foreach (GameObject distvar in objects)
         {
@@ -31,20 +104,38 @@ public class enemyAI : MonoBehaviour
             {
                 enemyTransform = searchcomponent.SearchedObjs.Dequeue(); // 찾은 적들
                 agent.transform.LookAt(target.transform.position); // 타겟을 바라봄
-                bool ZombieRun = Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
-                Animator.SetBool("Z_Run", ZombieRun);
+                anim.SetTrigger("targetFind");
                 destination = enemyTransform.transform.position; //이동
-                
-                //agent.GetComponent<Animation>().Play("Z_Run"); // agent의 Animation에 접근해서 Z_Run 이라는 Animation을 Play시켜라 ?
                 agent.destination = destination;  // searchcomponent 를 통해 찾는 위치로 agent가 이동 
+                dist = Vector3.Distance(destination, agent.transform.position); //거리를 재는 변수
+        
                 
-                /* dist = Vector3.Distance(destination, agent.transform.position); //거리를 재는 변수
-                if (dist <= 30.0f) { agent.Stop(); } // 디큐한 플레이어와의 거리가 30이하이면 그 자리에 멈춤 */
+                
+                if (dist <= 5f)
+                {
+                    //AttackTarget(enemyTransform);
+                    agent.isStopped = true; // 거리가 50이하이면 타겟 멈춤
+                }
             }
-            else { agent.destination = target.transform.position; } //target(목표오브젝트) 로 이동
-            
+            else
+            {
+                agent.isStopped = false;
+                anim.SetTrigger("targetFind");
+                agent.destination = target.transform.position; //목표오브젝트를 향해감.
+            }
         }
-    }
-}
-            
+    }*/
 
+
+    //obj.GetComponent<EntityStats>().TakeDamage(EnemyStr);
+
+    /*public void AttackTarget(GameObject obj)
+    {
+        StartCoroutine("hittarget");
+
+    }*/
+    
+
+
+
+    
