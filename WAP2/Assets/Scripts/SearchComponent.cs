@@ -37,7 +37,7 @@ public class SearchComponent : MonoBehaviour
                 {
                     if (IsInPOV(raycastedObjs[i].transform.position))
                     {
-                        Debug.Log(raycastedObjs[i].collider.gameObject);
+                        // Debug.Log(raycastedObjs[i].collider.gameObject);
                         searchedObjs.Enqueue(raycastedObjs[i].collider.gameObject);
                     }
                 }

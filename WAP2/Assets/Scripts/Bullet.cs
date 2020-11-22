@@ -5,20 +5,14 @@ using System.Collections.Specialized;
 using System.Security.Cryptography;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : MonoBehaviour;
 {
 
-
-    // 레이저 충돌 정보 받아옴.
-    private RaycastHit hitInfo;
-
-
-
-    float speed = 0.1f;
+    float Speed= 1f;
     float time;
     public int Damage = 20;
 
-
+    private RaycastHit hitInfo;
     public Vector3 direction;
 
     public void OnEnable()
@@ -33,25 +27,25 @@ public class Bullet : MonoBehaviour
     {
         //transform.forward = 이 오브젝트의 정면 벡터 값
         //translate == 현재 오브젝트의 포지션에서 인자로 주어진 벡터 값을 더함
-        transform.Translate(transform.forward * speed);
+        transform.Translate(transform.forward * Speed);
 
         if (Time.time > time + 2 && gameObject.activeSelf)
             gameObject.SetActive(false);
-
- 
+        
     }
 
     
     void OnTriggerEnter(Collider col)
     {
+        Debug.Log(col.name);
+
         if (col.gameObject.tag == "Target")
         {
             col.gameObject.SetActive(true);
+            col.GetComponent<EntityStats>().TakeDamage(99999);
             Debug.Log("df");
             if (gameObject.activeSelf)
                 gameObject.SetActive(false);
         }
-
-  
     }
 }

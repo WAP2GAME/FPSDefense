@@ -17,7 +17,7 @@ public class WeaponSway : MonoBehaviour
 
     // 정조준 sway 한계.
     [SerializeField]
-    private Vector3 FineSightLimitPos;
+    private Vector3 fineSightLimitPos;
 
 
     // 부드러운 움직임 정도.
@@ -64,8 +64,8 @@ public class WeaponSway : MonoBehaviour
         }
         else
         {
-            currentPos.Set(Mathf.Clamp(Mathf.Lerp(currentPos.x, -_moveX, smoothSway.y), -FineSightLimitPos.x, FineSightLimitPos.x),
-               Mathf.Clamp(Mathf.Lerp(currentPos.y, -_moveY, smoothSway.y), -FineSightLimitPos.y, FineSightLimitPos.y),
+            currentPos.Set(Mathf.Clamp(Mathf.Lerp(currentPos.x, -_moveX, smoothSway.y), -fineSightLimitPos.x, fineSightLimitPos.x),
+               Mathf.Clamp(Mathf.Lerp(currentPos.y, -_moveY, smoothSway.y), -fineSightLimitPos.y, fineSightLimitPos.y),
                originPos.z);
         }
         transform.localPosition = currentPos;

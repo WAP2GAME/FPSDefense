@@ -78,6 +78,7 @@ public class GunController : MonoBehaviour
     {
         if (isActivate)
         {
+            transform.position = transform.parent.parent.position;
             GunFireRateCalc();
             TryFire();
             TryReload();
@@ -124,14 +125,15 @@ public class GunController : MonoBehaviour
     // 발사 후 계산.
     private void Shoot()
     {
-
+        Debug.Log(gameObject);
         theCrosshair.FireAnimation();
         currentGun.currentBulletCount--;
         currentFireRate = currentGun.fireRate; // 연사 속도 재계산.
         PlaySE(currentGun.fire_Sound);
         currentGun.muzzleFlash.Play();
         bullet = objectPool.GetPooledObject(bulletPrefab.name);
-        bullet.GetComponent<Bullet>().direction = transform.forward;
+        bullet.transform.position = transform.position;
+        bullet.transform.LookAt(transform.position + transform.forward * 5f);
         bullet.SetActive(true);
 
         StopAllCoroutines();

@@ -114,7 +114,7 @@ public class EntityStats : MonoBehaviour
     {
         stat.TakeDamage(damage);
         if (stat.IsDead)
-            StartCoroutine(StartDyingAnimation());
+            Destroy(gameObject);
     }
 
     private IEnumerator StartDyingAnimation()

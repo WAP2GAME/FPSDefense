@@ -49,22 +49,7 @@ public abstract class CloseWeaponController : MonoBehaviour
 
 
     // 미완성 = 추상 코루틴.
-    protected  IEnumerator HitCoroutine()
-    {
-        while (isSwing)
-        {
-            if (CheckObject())
-            {
-                if (hitInfo.transform.tag == "Target")
-                    hitInfo.transform.GetComponent<EntityStats>().TakeDamage(100);
-
-
-                isSwing = false;
-                Debug.Log(hitInfo.transform.name);
-            }
-            yield return null;
-        }
-    }
+    protected abstract IEnumerator HitCoroutine();
 
 
     protected bool CheckObject()
